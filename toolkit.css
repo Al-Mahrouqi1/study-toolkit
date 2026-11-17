@@ -481,3 +481,6 @@ body.tk-bar-hide #tk-bar{transform:translateY(-140%);opacity:0;pointer-events:no
 #tk-help .ks{display:flex;align-items:center;gap:.25rem;flex:none}
 #tk-help .ks i{font-style:normal;color:var(--muted);font-size:.75em}
 #tk-help .ks em{font-style:normal;color:var(--muted);font-size:.75em;margin:0 .2rem}
+/* blue accent instead of gold */
+:root{--gold:#2F5BEA;--gold-soft:#EEF2FE;--accent:#2F5BEA;--accent-soft:#EEF2FE}
+html[data-theme=dark]{--gold:#8EA8FF;--gold-soft:#161D33;--accent:#8EA8FF;--accent-soft:#161D33}
