@@ -1,6 +1,6 @@
 # study-toolkit
 
-Reader tools for bilingual (English/Arabic) study summaries and tests: translation on selection (chapter glossary offline, Google/MyMemory/Lingva online), highlighter with 4 colours + underline, notes, eraser and undo, source of any text (chapter › section › slides), search, table of contents with progress, dark mode, font size, graded quizzes (MCQ, True/False, written), autosave and export.
+Reader tools for bilingual (English/Arabic) study summaries and tests: translation on selection (chapter glossary offline, Google/MyMemory/Lingva online), highlighter with 4 colours + underline, notes, eraser and undo, source of any text (chapter › section › slides), search, table of contents with progress, dark mode, font size, drawing layer (multi-colour pen, marker, text box, eraser), Excalidraw whiteboard (loaded on first open), graded quizzes (MCQ, True/False, written; Arabic shown on demand), autosave and export.
 
 Used by the `detailed-study-summary` skill:
 

@@ -53,6 +53,9 @@ The user wants complete but compact summaries and quick replies.
    When the user asks for a test, quiz or mock exam (اختبار), build it with the toolkit's `quiz()`
    (graded `mcq`, `tf`, and `essay` with a model answer). Every question gets `src=` (e.g.
    "Section 3 · Slides 14–19") and `ref=` (the section id) so the student can jump to the source.
+   Write questions in English; still fill the Arabic arguments, because the page hides Arabic until the
+   student taps «عرض العربية». Give many questions of all types. Formula questions get a full
+   step-by-step worked solution in the explanation or model answer.
 
    **Questions must test understanding, not only memory.** In every practice set or test, at most
    about a third are recall (define, list). The rest are understanding questions, mixed across:
@@ -70,7 +73,8 @@ The user wants complete but compact summaries and quick replies.
    Then `sys.path.insert(0, "work/tk"); from study_tools import *`, and after `write_page()` call
    `add_toolkit(out, chapter="Chapter N: Title", gloss={...})`. `gloss` maps every course term and hard
    word in the chapter to its Arabic meaning (English → Arabic); it gives instant translation even
-   offline. If the download fails, deliver without the toolkit and say so in one line.
+   offline. Do not open or read the toolkit files; just download them and call `add_toolkit`.
+   If the download fails, deliver without the toolkit and say so in one line.
    Run `check_html()` once (tag balance, image count) and check against the rules in this file; save to
    `/mnt/user-data/outputs/`, call `present_files`.
 8. **Reply briefly** in the user's language: what the file contains, every gap or uncertainty you flagged
@@ -101,7 +105,8 @@ The user wants complete but compact summaries and quick replies.
 ## Language and look
 
 The toolkit adds: translation on selection (chapter glossary + online), highlighter, notes, eraser
-and undo, source of any text, search, contents with progress, dark mode, font size, export.
+and undo, source of any text, search, contents with progress, dark mode, font size, export, drawing on
+the page (multi-colour pen, marker, text box, eraser) and an Excalidraw whiteboard.
 Light is the default look.
 English first, Arabic directly under it (short), for each explanatory unit. Course terms stay in English inside Arabic
 text (`L("term")`). Light, modern, big type: use `assets/style.css` unchanged unless the user asks for a

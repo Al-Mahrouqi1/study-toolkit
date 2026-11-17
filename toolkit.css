@@ -197,3 +197,44 @@ a.tk-btn{text-decoration:none}
 .tk-twin summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:.3rem;list-style:none}
 .tk-twin p{margin:.4rem 0 0;font-size:14px}
 .tk-sig{text-align:center;font-size:12px;color:var(--muted);opacity:.75;padding:1.5rem 1rem 5rem;font-family:"Manrope",system-ui,sans-serif;letter-spacing:.02em}
+/* ink layer */
+#tk-ink{position:absolute;top:0;left:0;pointer-events:none;z-index:40}
+#tk-ink svg{position:absolute;top:0;left:0;overflow:visible}
+#tk-ink .mk{mix-blend-mode:multiply}
+html[data-theme=dark] #tk-ink .mk{mix-blend-mode:screen}
+body.tk-drawing #tk-ink{pointer-events:auto;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none}
+body.tk-drawing #tk-ink[data-tool=text]{cursor:text}
+body.tk-drawing #tk-ink[data-tool=eraser]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Ccircle cx='13' cy='13' r='11' fill='rgba(255,255,255,.6)' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 13 13,cell}
+#tk-ink .tl{position:absolute;inset:0}
+#tk-ink .tb{position:absolute;min-width:3ch;max-width:min(32rem,80vw);white-space:pre-wrap;font-family:"IBM Plex Sans Arabic","Manrope",system-ui,sans-serif;font-weight:600;line-height:1.4;padding:2px 6px;border:1.5px solid transparent;border-radius:6px;pointer-events:none;outline:none}
+body.tk-drawing #tk-ink[data-tool=text] .tb{pointer-events:auto;border-color:var(--line);border-style:dashed;cursor:text}
+body.tk-drawing #tk-ink[data-tool=text] .tb::before{content:"";position:absolute;left:-7px;top:-7px;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:move;box-shadow:0 0 0 2px var(--surface)}
+#tk-ink .tb:focus{border:1.5px solid var(--accent)!important;background:color-mix(in srgb,var(--surface) 88%,transparent)}
+#tk-draw{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:64;display:none;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px;box-shadow:var(--shadow);flex-wrap:wrap;justify-content:center;max-width:96vw}
+body.tk-drawing #tk-draw{display:flex}
+#tk-draw button{border:0;background:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--muted);padding:0;transition:background .12s,color .12s}
+#tk-draw button:hover{background:var(--accent-soft);color:var(--ink)}
+#tk-draw button.on{background:var(--accent-soft);color:var(--accent)}
+#tk-draw .sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+#tk-draw .cl i{width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+#tk-draw .cl.on{background:none;box-shadow:inset 0 0 0 2px var(--accent)}
+#tk-draw .wd i{border-radius:50%;background:currentColor}
+#tk-draw .done{background:var(--accent);color:#fff}
+#tk-draw .done:hover{background:var(--accent);color:#fff;filter:brightness(1.1)}
+body.tk-drawing #tk-toast{bottom:84px}
+/* whiteboard */
+#tk-board{position:fixed;inset:0;z-index:95;background:var(--surface);display:none;flex-direction:column}
+#tk-board.on{display:flex}
+#tk-board header{height:46px;flex:none;display:flex;align-items:center;gap:.8rem;padding:0 .6rem 0 1rem;border-bottom:1px solid var(--line)}
+#tk-board header b{display:flex;align-items:center;gap:.4rem;font-size:15px}
+#tk-board header .st{flex:1;font-size:12.5px;color:var(--muted)}
+#tk-board .cv{flex:1;position:relative;min-height:0}
+#tk-board .cv .tk-empty{padding-top:20vh}
+body.tk-board-open{overflow:hidden}
+body.tk-board-open #tk-bar,body.tk-board-open #tk-draw{display:none}
+/* quiz: Arabic hidden until asked */
+.quiz:not(.ar-on) .q .a{display:none}
+.quiz:not(.ar-on) .q .bi .e{margin:0}
+@media(max-width:700px){#tk-draw{bottom:64px}}
+@media print{#tk-draw,#tk-board{display:none!important}#tk-ink{display:block!important}}
+@media(max-width:700px){#tk-draw{left:8px;right:8px;transform:none;max-width:none;bottom:62px}#tk-draw button{width:34px;height:34px}body.tk-drawing #tk-toast{bottom:170px}}
