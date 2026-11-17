@@ -144,3 +144,88 @@ def solved(title_en, title_ar, problem_en, problem_ar, given=(), find="", items=
     if g or find:
         head += f'<div class="gf" dir="ltr"><div><b>Given</b><ul>{g}</ul></div><div><b>Find</b><p>{m(find) if find else ""}</p></div></div>'
     return head + steps(items, answer, check) + "</div>"
+
+
+# ---------------------------------------------------------------- real summary blocks
+def _ul(items):
+    if isinstance(items, str):
+        return f"<p>{items}</p>"
+    return "<ul>" + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
+
+def bigpicture(idea_en, idea_ar, center, branches, src=""):
+    """Chapter opener: the big idea in 1–2 sentences + a concept map.
+    branches = [(label, [children...], relation), ...] — relation is a short verb phrase shown on the link,
+    label/children may be (text, concept_id) to link to a concept card."""
+    def lk(x):
+        if isinstance(x, (tuple, list)):
+            return f'<a href="#c-{x[1]}">{x[0]}</a>'
+        return x
+    br = "".join(
+        f'<li><span class="rel">{b[2] if len(b) > 2 else ""}</span><div class="nd">{lk(b[0])}</div>'
+        + ("<ul>" + "".join(f'<li><div class="nd sm">{lk(c)}</div></li>' for c in b[1]) + "</ul>" if len(b) > 1 and b[1] else "")
+        + "</li>" for b in branches)
+    return (f'<section id="big" class="bigp"><div class="idea"><span class="lbl">The big idea · الفكرة الكبيرة</span>'
+            f'<p class="e" dir="ltr">{idea_en}</p><p class="a" dir="rtl">{idea_ar}</p></div>'
+            f'<div class="cmap" dir="ltr"><ul><li><div class="nd root">{center}</div><ul>{br}</ul></li></ul></div>'
+            + (f'<p class="slides">{src}</p>' if src else "") + "</section>")
+
+def lead(why_en, builds_on="", leads_to="", why_ar=""):
+    """Section opener: why this topic matters + how it links to the previous/next topic."""
+    chain = ""
+    if builds_on or leads_to:
+        chain = '<div class="chain" dir="ltr">' + (f'<span>Builds on <b>{builds_on}</b></span>' if builds_on else "") + \
+                (f'<span class="ar">→</span><span>Leads to <b>{leads_to}</b></span>' if leads_to else "") + "</div>"
+    return f'<div class="lead">{chain}<p dir="ltr">{why_en}</p>' + (f'<p class="a" dir="rtl">{why_ar}</p>' if why_ar else "") + "</div>"
+
+def concept(cid, name, definition="", plain="", how=None, example="", mistake="", connects=None, ar="", src="", extra=""):
+    """One concept card. definition = the course's exact wording (no paraphrase). plain = one simple sentence.
+    how = str or list (how it works / parts / rules). connects = [(concept_id, "how they relate"), ...].
+    ar = ONE short Arabic line with the meaning (not a translation of the card). extra = any HTML (fig, law, table)."""
+    rows = ""
+    if definition:
+        rows += f'<div class="r def"><span class="cl">Definition</span><div class="cv"><q>{definition}</q></div></div>'
+    if plain:
+        rows += f'<div class="r"><span class="cl">In plain words</span><div class="cv">{plain}</div></div>'
+    if how:
+        rows += f'<div class="r"><span class="cl">How it works</span><div class="cv">{_ul(how)}</div></div>'
+    if example:
+        rows += f'<div class="r"><span class="cl">Example</span><div class="cv">{example}</div></div>'
+    if mistake:
+        rows += f'<div class="r mis"><span class="cl">Common mistake</span><div class="cv">{mistake}</div></div>'
+    if connects:
+        rows += ('<div class="r con"><span class="cl">Connects to</span><div class="cv"><ul>'
+                 + "".join(f'<li><a href="#c-{c[0]}">{c[0].replace("-", " ").title() if len(c) < 3 else c[2]}</a> — {c[1]}</li>' for c in connects)
+                 + "</ul></div></div>")
+    return (f'<div class="concept" id="c-{cid}"><div class="chd"><h4 dir="ltr">{name}</h4>'
+            + (f'<span class="src">{src}</span>' if src else "") + "</div>"
+            + (f'<div class="car" dir="rtl">{ar}</div>' if ar else "") + rows + extra + "</div>")
+
+def compare(title, headers, rows, note=""):
+    """Side-by-side comparison of close concepts. headers = ["", "A", "B"], rows = [["Aspect", a, b], ...]."""
+    h = "".join(f"<th>{x}</th>" for x in headers)
+    r = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in row) + "</tr>" for row in rows)
+    return (f'<div class="cmp"><div class="cmh">{title}</div><table dir="ltr"><thead><tr>{h}</tr></thead><tbody>{r}</tbody></table>'
+            + (f'<p class="cmn">{note}</p>' if note else "") + "</div>")
+
+def keypoints(items, title="Key points · أهم النقاط"):
+    """At most 5, most important first. items = ["point", ("core point", True), ...]; core = must-know."""
+    lis = ""
+    for x in items[:5]:
+        t, core = (x if isinstance(x, (tuple, list)) else (x, False))
+        lis += f'<li class="{"core" if core else ""}">{t}</li>'
+    return f'<div class="kp"><div class="kph">{title}</div><ol dir="ltr">{lis}</ol></div>'
+
+def cheatsheet(definitions=(), formulas=(), differences=(), traps=(), sid="cheat"):
+    """One-page quick review at the end. definitions = [(term, short meaning)], formulas = [m-expr or (name, m-expr)],
+    differences = [(A, B, "difference")], traps = ["..."]."""
+    out = f'<section id="{sid}" class="cheat"><h2><span class="t"><span class="te" dir="ltr">Quick review sheet</span><span class="ta" dir="rtl">ورقة المراجعة السريعة</span></span></h2><div class="cg" dir="ltr">'
+    if definitions:
+        out += '<div class="cb"><h5>Definitions</h5><dl>' + "".join(f"<dt>{a}</dt><dd>{b}</dd>" for a, b in definitions) + "</dl></div>"
+    if formulas:
+        out += '<div class="cb"><h5>Formulas</h5><ul class="fm">' + "".join(
+            f"<li><span class=\"fl\">{f[0]}</span>{m(f[1])}</li>" if isinstance(f, (tuple, list)) else f"<li>{m(f)}</li>" for f in formulas) + "</ul></div>"
+    if differences:
+        out += '<div class="cb"><h5>Don\'t confuse</h5><ul>' + "".join(f"<li><b>{a}</b> vs <b>{b}</b>: {d}</li>" for a, b, d in differences) + "</ul></div>"
+    if traps:
+        out += '<div class="cb trap"><h5>Exam traps</h5><ul>' + "".join(f"<li>{t}</li>" for t in traps) + "</ul></div>"
+    return out + "</div></section>"

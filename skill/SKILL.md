@@ -19,10 +19,10 @@ The rules in this file are enough for a normal chapter; open `references/conditi
 
 The user wants complete but compact summaries and quick replies.
 - **Complete, not long:** every exam-relevant point and every course definition stays, but in the
-  fewest words. Bullets over paragraphs. Simple explanation: 1–2 sentences. Do not repeat the same idea
-  in `bi`, `card` and `review`. `review` lists items only, no prose.
-- **Arabic is a short gloss**, not a full re-translation: key sentences and explanations only; skip
-  Arabic for lists of names, tables, and anything already obvious from the English.
+  fewest words (target: the summary has about a third of the slides' word count). Never repeat an idea.
+- **No English/Arabic duplication:** English is the main text. Arabic appears only as one short line per
+  concept (`concept(ar=...)`), the big idea, and section `lead`s. Never translate bullets, tables or
+  whole paragraphs; the reader translates anything else with the toolkit (glossary + selection).
 - **Simple words:** explanations (English and Arabic) use plain, everyday words and short sentences,
   like explaining to a friend. Course definitions stay verbatim; only the explanations are simplified.
 - **Illustrative diagrams:** besides the slides' own figures, add your own simple inline SVG diagrams
@@ -35,6 +35,26 @@ The user wants complete but compact summaries and quick replies.
   text-only slides. Crop diagrams in one pass and check them with one montage.
 - **One build:** write the whole page in one build script, run `check_html()` once, fix only real errors.
 - **Short reply:** what the file contains, the gaps you flagged, one question to start. Nothing else.
+
+## How to summarize (the method)
+
+A summary is not the slides in order. Rebuild the chapter around its concepts and how they connect.
+1. **List the concepts** from `slides.txt` (terms, laws, processes, components). Merge slides that
+   repeat or continue the same idea. Note for each concept what it depends on and what it leads to.
+2. **Order by dependency** (what you must know first), keeping the chapter's order when it already works.
+   Group concepts into 3–7 sections.
+3. **Open the page with `bigpicture()`**: the chapter's main idea in 1–2 sentences + a concept map of
+   the sections and their concepts, with a short verb on each link ("stores", "measured by", "causes").
+4. **Each section** = `lead()` (why it matters, builds on → leads to) → one `concept()` card per concept
+   → `compare()` for any two or more concepts students mix up → slide figures inside the card they
+   explain (`extra=`) → `keypoints()` (max 5, most important first, mark the must-knows).
+5. **Concept card rows** (skip empty ones, never pad): Definition (course wording, verbatim) → In plain
+   words (one sentence) → How it works (2–4 bullets: parts, steps, rules) → Example (from the slides,
+   or labelled "my example") → Common mistake → Connects to (links to other cards with the relation).
+6. **Bullets:** one idea each, max ~15 words, start with the key term, same grammar across a list,
+   most important first, max 5 per list. No filler ("It is important to note that…").
+7. **End the page with `cheatsheet()`**: all definitions in one line each, all formulas, "don't confuse"
+   pairs, and exam traps, so the student can revise the chapter from one screen.
 
 ## Workflow
 
@@ -56,12 +76,12 @@ The user wants complete but compact summaries and quick replies.
    `mkdir -p work/tk && for f in toolkit.css toolkit.js study_tools.py; do curl -fsSL
    "https://raw.githubusercontent.com/Al-Mahrouqi1/study-toolkit/main/$f" -o "work/tk/$f"; done`, then
    `sys.path.insert(0, "work/tk"); from study_tools import *` (gives `m`, `law`, `steps`, `solved`,
-   `quiz`, `mcq`, `tf`, `essay`, `add_toolkit`). One
-   `section()` per topic, containing, in this rhythm: course definitions (`term`), explanation (`bi`),
-   the figure with its explanation (`fig`), examples from the slides (`card`/`bil`), tables from the
-   slides (`dtable`), gaps and cautions (`warn`), and a `review` box of what appears important.
-6. **End the page** with: practice questions without answers (`practice`) including the slides' own
-   exercises, and the review-status table (`status`, everything "Not yet tested").
+   `quiz`, `mcq`, `tf`, `essay`, `add_toolkit`, `bigpicture`, `lead`, `concept`, `compare`,
+   `keypoints`, `cheatsheet`). Build the page with the method above: `bigpicture()` first, then one
+   `section()` per group of concepts using `lead`, `concept`, `compare`, `fig`, `law`/`solved`,
+   `dtable`, `warn` and `keypoints`. Do not use `term`, `bi`, `card` or `review` for new summaries.
+6. **End the page** with: `cheatsheet()`, practice questions without answers (`practice`) including
+   the slides' own exercises, and the review-status table (`status`, everything "Not yet tested").
    When the user asks for a test, quiz or mock exam (اختبار), build it with the toolkit's `quiz()`
    (graded `mcq`, `tf`, and `essay` with a model answer). Every question gets `src=` (e.g.
    "Section 3 · Slides 14–19") and `ref=` (the section id) so the student can jump to the source.
@@ -113,7 +133,7 @@ The user wants complete but compact summaries and quick replies.
 ## What every section must contain
 
 - **Slide references** ("Slides 14–19") so the student can find the source.
-- **Course definition** verbatim + **simple explanation** in both languages (`term`). If the slides give two
+- **Course definition** verbatim + **plain-words sentence** in a `concept()` card. If the slides give two
   wordings, keep both and say so.
 - **Every image/diagram** embedded with a caption, and an explanation of what it shows and how it connects
   to the text. Describe only what is visible or written; mark anything you cannot read reliably.
@@ -121,7 +141,7 @@ The user wants complete but compact summaries and quick replies.
   short, simple explanation.
 - **Examples from the slides**; any extra example is labelled as yours ("(my scenario)" / "من وضعي").
 - **Emphasis preserved**: things the slide highlights (red, bold, underlined, numbered lists, repeated
-  ideas) appear in `review` as "appears important to study". Never write "will be on the exam".
+  ideas) become must-know `keypoints` and appear in the `cheatsheet`. Never write "will be on the exam".
 - **Formulas** (if any): every law goes in `law(name_en, name_ar, expr, variables, when, watch_out)`,
   a coloured boxed card with the formula, a table of each symbol (meaning, unit), when to use it and the
   common mistake. Then at least one `solved()` worked example from the slides (or labelled "my
