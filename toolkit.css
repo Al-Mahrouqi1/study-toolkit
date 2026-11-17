@@ -456,3 +456,28 @@ ol.steps>li::before{color:var(--gold);letter-spacing:.04em}
 #tk-toast{background:#14161B;border-radius:14px}
 .tk-sig{font-family:var(--serif);font-size:13px;letter-spacing:.04em;opacity:.6}
 @media(max-width:700px){html{font-size:17.5px}main{padding:3.2rem 1.15rem 6rem}h2{margin-top:4rem}.concept{padding:1.15rem 1.15rem 1rem}.concept h4{font-size:1.5rem}.bigp .idea .e{font-size:1.35rem}}
+/* bullet lists: clean rows */
+ul.plain,ul.rv{list-style:none;padding:.35rem 1.4rem;margin:1.1rem 0 1.4rem;background:var(--surface);border-radius:var(--radius);box-shadow:var(--lift);max-width:46rem}
+ul.plain li,ul.rv li{position:relative;border:0!important;border-bottom:1px solid var(--line)!important;margin:0;padding:.85rem 0 .85rem 1.5rem!important}
+ul.plain li:last-child,ul.rv li:last-child{border-bottom:0!important}
+ul.plain li::before,ul.rv li::before{content:"";position:absolute;left:.15rem;top:1.42rem;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+ul.plain li .e,ul.rv li .e{font-weight:500;line-height:1.6}
+ul.plain li .a,ul.rv li .a{font-size:.9em;color:var(--muted);margin-top:.25rem;line-height:1.75}
+.review ul.rv{box-shadow:none;padding:0;background:none}
+kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.55em;height:1.55em;padding:0 .4em;font:600 .78em/1 "Manrope",system-ui,sans-serif;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;vertical-align:.08em;white-space:nowrap}
+/* toolbar auto-hide */
+#tk-bar{transition:transform .28s ease,opacity .28s ease,right .25s}
+body.tk-bar-hide #tk-bar{transform:translateY(-140%);opacity:0;pointer-events:none}
+@media(max-width:700px){body.tk-bar-hide #tk-bar{transform:translate(50%,140%)}}
+/* shortcuts sheet */
+#tk-help{position:fixed;inset:0;z-index:96;display:none;place-items:center;background:rgba(10,12,16,.35);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);padding:1rem}
+#tk-help.on{display:grid;animation:tkpop .15s ease-out}
+#tk-help .hb{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);width:min(54rem,100%);max-height:88vh;overflow:auto;padding:1.1rem 1.4rem 1.4rem}
+#tk-help header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+#tk-help header b{display:flex;gap:.5rem;align-items:center;font-size:1.05rem}
+#tk-help .hg{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.4rem 1.6rem}
+#tk-help h6{margin:1rem 0 .3rem;font-size:.72rem;letter-spacing:.1em;color:var(--gold);font-weight:800}
+#tk-help .hr{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.38rem 0;border-bottom:1px solid var(--line);font-size:14px}
+#tk-help .ks{display:flex;align-items:center;gap:.25rem;flex:none}
+#tk-help .ks i{font-style:normal;color:var(--muted);font-size:.75em}
+#tk-help .ks em{font-style:normal;color:var(--muted);font-size:.75em;margin:0 .2rem}

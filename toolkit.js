@@ -58,7 +58,7 @@ const srcLine=s=>[s.chap,s.title,s.where].filter(Boolean).map(esc).join(' › ')
 const B=(k,ic,t)=>`<button data-b="${k}" title="${t}" aria-label="${t}">${I(ic,19)}</button>`;
 document.body.append(
   E('div',{id:'tk-progress',class:'tk-ui'}),
-  E('div',{id:'tk-bar',class:'tk-ui',role:'toolbar'},B('toc','menu','الفهرس')+B('find','search','بحث  ( / )')+B('tr','lang','الترجمة')+B('notes','notes','التحديدات والملاحظات')+B('draw','draw','الرسم: قلم، تظليل، نص، ممحاة (D)')+B('board','board','السبورة (B)')+'<span class="sep"></span>'+B('fm','fm','تصغير الخط')+B('fp','fp','تكبير الخط')+B('theme','moon','الوضع الليلي')+B('exp','dl','تنزيل نسخة فيها تحديداتك وملاحظاتك')),
+  E('div',{id:'tk-bar',class:'tk-ui',role:'toolbar'},B('toc','menu','الفهرس (S)')+B('find','search','بحث (/ أو Ctrl K)')+B('tr','lang','الترجمة (L)')+B('notes','notes','التحديدات والملاحظات (N)')+B('draw','draw','الرسم: قلم، تظليل، نص، ممحاة (D)')+B('board','board','السبورة (B)')+'<span class="sep"></span>'+B('fm','fm','تصغير الخط (-)')+B('fp','fp','تكبير الخط (+)')+B('theme','moon','الوضع الليلي (Shift D)')+B('exp','dl','تنزيل نسخة بعملك (Ctrl S)')+B('help','info','اختصارات لوحة المفاتيح (?)')),
   E('aside',{id:'tk-toc',class:'tk-ui',dir:'rtl'},`<header><b>الفهرس</b><div class="tk-meter"><i></i></div><small class="pc"></small></header><div class="list" dir="ltr"></div>`),
   E('aside',{id:'tk-panel',class:'tk-ui',dir:'rtl'},`<header><nav><button data-tab=tr>${I('lang',16)} الترجمة</button><button data-tab=notes>${I('notes',16)} الملاحظات</button><button data-tab=find>${I('search',16)} البحث</button></nav><button class="x" title="إغلاق (Esc)">${I('x',18)}</button></header>
    <div class="tab" data-tab="tr"><div class="tk-inw">${I('lang',18)}<input class="tk-in" id="tk-trin" dir="auto" placeholder="اكتب كلمة أو جملة ثم Enter"></div><div id="tk-trout"></div><div class="tk-h"><span>${I('star',16)} كلماتي المحفوظة</span><button class="tk-ib" id="tk-wexp" title="تنزيل القائمة">${I('dl',17)}</button></div><div id="tk-words"></div></div>
@@ -320,7 +320,7 @@ dbar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)retur
 function styleFocused(){const t=document.activeElement;if(t&&t.classList&&t.classList.contains('tb')){const it=S.ink.find(x=>x.id===t.dataset.id);if(it){it.c=pen.c;it.w=pen.w;t.style.color=INK[pen.c];t.style.fontSize=[14,18,24][pen.w]+'px';save()}}}
 const dropEmpty=()=>{const n=S.ink.length;S.ink=S.ink.filter(x=>x.k!=='t'||(x.t||'').trim()||(document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.id===x.id));if(S.ink.length!==n){tlay.innerHTML='';renderInk();save()}};
 function setTool(t){dropEmpty();pen.tool=t;ink.dataset.tool=t;tlay.querySelectorAll('.tb').forEach(x=>x.contentEditable=t==='text'?'true':'false');drawBar()}
-function drawMode(v){if(!v){document.activeElement&&document.activeElement.blur&&document.activeElement.blur();dropEmpty()}pen.on=v;document.body.classList.toggle('tk-drawing',v);$('[data-b=draw]').classList.toggle('on',v);if(v){hidePop();getSelection().removeAllRanges();setTool(pen.tool);toast('وضع الرسم: ارسم على الصفحة، Esc للخروج',{icon:'draw',ms:2200})}else{tlay.querySelectorAll('.tb').forEach(x=>{x.contentEditable='false';x.blur()})}}
+function drawMode(v){document.body.classList.remove('tk-bar-hide');if(!v){document.activeElement&&document.activeElement.blur&&document.activeElement.blur();dropEmpty()}pen.on=v;document.body.classList.toggle('tk-drawing',v);$('[data-b=draw]').classList.toggle('on',v);if(v){hidePop();getSelection().removeAllRanges();setTool(pen.tool);toast('وضع الرسم: ارسم على الصفحة، Esc للخروج',{icon:'draw',ms:2200})}else{tlay.querySelectorAll('.tb').forEach(x=>{x.contentEditable='false';x.blur()})}}
 if('ResizeObserver'in window)new ResizeObserver(renderInk).observe(ROOT);addEventListener('load',renderInk);
 
 /* ---------- whiteboard (real Excalidraw, loaded on first open) ---------- */
@@ -366,6 +366,45 @@ ROOT.addEventListener('mouseout',e=>{if(e.target.closest('.sym')&&!coarse())hide
 ROOT.addEventListener('click',e=>{const s=e.target.closest('.sym');if(s&&getSelection().isCollapsed){showTip(s);clearTimeout(tip._t);tip._t=setTimeout(hideTip,4000)}});
 addEventListener('scroll',()=>{if(tip.classList.contains('on'))hideTip()},{passive:true});
 
+/* ---------- keyboard shortcuts + help sheet ---------- */
+Object.assign(P,{kbd:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>'});
+const KEYS=[['عام',[['/','Ctrl K','بحث'],['?','','عرض الاختصارات'],['S','','الفهرس'],['L','','لوحة الترجمة'],['N','','لوحة الملاحظات'],['D','','الرسم على الصفحة'],['B','','السبورة'],['Ctrl S','','تنزيل نسخة بعملك'],['Esc','','إغلاق']]],
+ ['التنقل',[['J',']','القسم التالي'],['K','[','القسم السابق'],['F','','إنهاء القسم الحالي / إلغاؤه'],['G','','أعلى الصفحة'],['Shift G','','آخر الصفحة']]],
+ ['العرض',[['+','=','تكبير الخط'],['-','','تصغير الخط'],['0','','الخط الافتراضي'],['Shift D','','الوضع الليلي']]],
+ ['بعد تحديد نص',[['1 – 5','','لون التحديد / تسطير'],['N','','ملاحظة'],['T','','ترجمة'],['C','','نسخ'],['Delete','','إزالة / مسح التحديد'],['Ctrl Z','','تراجع']]],
+ ['وضع الرسم',[['P','','قلم'],['M','','قلم تظليل'],['X','','مربع نص'],['E','','ممحاة'],['Ctrl Z','Ctrl Y','تراجع / إعادة'],['D','Esc','إنهاء الرسم']]],
+ ['الاختبار',[['A – D','1 – 4','اختيار إجابة السؤال الظاهر'],['T','F','صح / خطأ'],['Enter','','إظهار الإجابة النموذجية']]]];
+const kb=s=>s.split(' ').map(k=>`<kbd>${esc(k)}</kbd>`).join('<i>+</i>').replace('<i>+</i><kbd>–</kbd><i>+</i>','–');
+const help=E('div',{id:'tk-help',class:'tk-ui',dir:'rtl',role:'dialog','aria-label':'اختصارات لوحة المفاتيح'},`<div class="hb"><header><b>${I('kbd',20)} اختصارات لوحة المفاتيح</b><button class="tk-ib" title="إغلاق (Esc)">${I('x',18)}</button></header><div class="hg">${KEYS.map(([g,rows])=>`<div class="hs"><h6>${g}</h6>${rows.map(([a,b,l])=>`<div class="hr"><span>${l}</span><span class="ks" dir="ltr">${kb(a)}${b?'<em>أو</em>'+kb(b):''}</span></div>`).join('')}</div>`).join('')}</div></div>`);
+document.body.append(help);help.addEventListener('click',e=>{if(e.target===help||e.target.closest('header button'))help.classList.remove('on')});
+const helpOpen=()=>help.classList.contains('on');
+$('[data-b=help]')&&($('[data-b=help]').innerHTML=I('kbd',19));
+function curSec(){let best=secs[0];for(const s of secs){if(s.getBoundingClientRect().top<=innerHeight*.3)best=s}return best}
+function goSec(d){if(!secs.length)return;const c=curSec(),i=secs.indexOf(c);const t=d>0?secs[Math.min(secs.length-1,c&&c.getBoundingClientRect().top>innerHeight*.3?i:i+1)]:secs[Math.max(0,c&&c.getBoundingClientRect().top<-40?i:i-1)];t&&t.scrollIntoView({behavior:'smooth',block:'start'})}
+function quizKey(k){const qs=$$('.quiz .q',ROOT).filter(q=>{const r=q.getBoundingClientRect();return r.top<innerHeight*.75&&r.bottom>innerHeight*.15});const q=qs[0];if(!q)return false;const t=q.dataset.type;
+  if(t==='mcq'){const i='abcd'.indexOf(k)>=0?'abcd'.indexOf(k):'12345678'.indexOf(k);if(i<0&&t==='mcq')return false;const li=$$('ol.opts>li',q)[i];if(li){li.click();return true}}
+  if(t==='tf'&&(k==='t'||k==='f')){const b=$(`.tk-tf button[data-v="${k==='t'}"]`,q);if(b){b.click();return true}}
+  if(t==='essay'&&k==='enter'){const b=$('.tk-row button.pri',q);if(b){b.click();return true}}return false}
+function globalKey(e){const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
+  if(mod&&k==='k'){e.preventDefault();openPanel('find');$('#tk-fin').focus();return true}
+  if(mod&&k==='s'){e.preventDefault();exportHTML();return true}
+  if(mod||e.altKey)return false;
+  if(e.key==='?'||(e.key==='/'&&e.shiftKey)){help.classList.toggle('on');return true}
+  if(quizKey(k==='enter'?'enter':k))return true;
+  const B=n=>{$(`#tk-bar [data-b=${n}]`).click();return true};
+  if(k==='s')return B('toc');if(k==='l')return B('tr');if(k==='n')return B('notes');
+  if(k==='j'||e.key===']'){goSec(1);return true}if(k==='k'||e.key==='['){goSec(-1);return true}
+  if(k==='f'){const s=curSec();if(s){const cb=$(`#tk-toc .it[data-id="${s.id}"] .ck`);cb&&cb.click();toast(S.done[s.id]?'أنهيت هذا القسم':'أُلغي الإنهاء',{icon:'check',ms:1400})}return true}
+  if(k==='g'){scrollTo({top:e.shiftKey?document.documentElement.scrollHeight:0,behavior:'smooth'});return true}
+  if(e.key==='+'||e.key==='=')return B('fp');if(e.key==='-'||e.key==='_')return B('fm');
+  if(e.key==='0'){S.font=null;applyLook();save();toast('الخط الافتراضي',{icon:'fm',ms:1200});return true}
+  if(e.shiftKey&&k==='d')return B('theme');
+  return false}
+/* toolbar hides while scrolling down, comes back on scroll up or near the top */
+let lastY=scrollY;addEventListener('scroll',()=>{const y=scrollY,d=y-lastY;if(Math.abs(d)<8)return;
+  const keep=document.body.classList.contains('tk-panel-open')||pen.on||y<120;document.body.classList.toggle('tk-bar-hide',!keep&&d>0);lastY=y},{passive:true});
+addEventListener('mousemove',e=>{if(e.clientY<80&&document.body.classList.contains('tk-bar-hide'))document.body.classList.remove('tk-bar-hide')},{passive:true});
+
 /* ---------- export ---------- */
 function exportHTML(){S.saved=Date.now();flush();
   const data=JSON.stringify(S).replace(/</g,'\\u003c'),tag='<script type="application/json" id="tk-'+'data">'+data+'<\/script>',re=/<script type="application\/json" id="tk-data">[\s\S]*?<\/script>/;
@@ -379,14 +418,18 @@ $('#tk-bar').addEventListener('click',e=>{const b=e.target.closest('button');if(
   else if(k==='theme'){S.theme=S.theme==='dark'?'light':'dark';applyLook();save()}
   else if(k==='exp')exportHTML()
   else if(k==='draw')drawMode(!pen.on)
-  else if(k==='board')openBoard()});
+  else if(k==='board')openBoard()
+  else if(k==='help')help.classList.toggle('on')});
 document.addEventListener('keydown',e=>{if(boardOpen()){if(e.key==='Escape'&&!document.activeElement.closest('#tk-board .cv'))closeBoard();return}
   const inField=e.target.closest&&e.target.closest('input,textarea,[contenteditable=true]');
-  if(e.key==='Escape'){if(inField&&inField.classList.contains('tb')){inField.blur();return}if(popMode){hidePop();getSelection().removeAllRanges()}else if(pen.on)drawMode(false);else if(panelOpen())closePanel();return}
+  if(helpOpen()&&(e.key==='Escape'||e.key==='?')){help.classList.remove('on');return}
+  if(e.key==='Escape'){if(inField&&inField.classList.contains('tb')){inField.blur();return}if(inField&&inField.closest('#tk-panel')){inField.blur();closePanel();return}if(popMode){hidePop();getSelection().removeAllRanges()}else if(pen.on)drawMode(false);else if(panelOpen())closePanel();return}
   if(inField)return;
   if(pen.on&&!e.altKey){const k=e.key.toLowerCase();if((e.ctrlKey||e.metaKey)&&(k==='y'||(k==='z'&&e.shiftKey))){e.preventDefault();inkRedo();return}if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();inkUndo();return}
     if(!e.ctrlKey&&!e.metaKey){const m={p:'pen',m:'marker',x:'text',e:'eraser'}[k];if(m){setTool(m);return}if(k==='d'){drawMode(false);return}}}
-  if(!popMode&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const k=e.key.toLowerCase();if(k==='d'){drawMode(!pen.on);return}if(k==='b'){openBoard();return}}
+  if(!popMode&&!pen.on&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.shiftKey&&quizKey(e.key.toLowerCase()))return;
+  if(!popMode&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.shiftKey){const k=e.key.toLowerCase();if(k==='d'){drawMode(!pen.on);return}if(k==='b'){openBoard();return}}
+  if(!popMode&&!pen.on&&globalKey(e)){return}
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&hist.length){e.preventDefault();undo();return}
   if(popMode&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const k=e.key.toLowerCase();let a=null,b=null;
     if(/^[1-5]$/.test(k)){a='c';b={dataset:{c:COLORS[+k-1][0]}}}else if(k==='n')a='note';else if(k==='t')a='tr';else if(k==='c')a='copy';
