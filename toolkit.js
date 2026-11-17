@@ -230,8 +230,9 @@ $('#tk-fin').addEventListener('input',e=>{clearTimeout(fT);fT=setTimeout(()=>doF
 $('#tk-fin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go(e.shiftKey?cur-1:cur+1)}});
 
 /* ---------- quiz ---------- */
+const QEN=(($('meta[name=tk-quiz-lang]')||{}).content||'')==='en',L2=(ar,en)=>QEN?en:ar;
 function initQuiz(){$$('.quiz',ROOT).forEach((qz,qi)=>{const qs=$$('.q',qz);if(!qs.length)return;const K='m'+qi;
-  const board=E('div',{class:'tk-x tk-score',dir:'rtl'});qs[0].before(board);
+  const board=E('div',{class:'tk-x tk-score',dir:QEN?'ltr':'rtl'});qs[0].before(board);
   const mode=()=>S.quiz[K]||qz.dataset.mode||'instant',submitted=()=>!!S.quiz['sub'+qi];
   const st=id=>S.quiz[id]||(S.quiz[id]={});const correct=(q,v)=>String(v)===String(q.dataset.answer);
   function render(){let ok=0,bad=0,tot=qs.length,ans=0;
@@ -240,27 +241,27 @@ function initQuiz(){$$('.quiz',ROOT).forEach((qz,qi)=>{const qs=$$('.q',qz);if(!
       const items=t==='mcq'?$$('ol.opts>li',q):t==='tf'?$$('.tk-tf button',q):[];
       items.forEach(it=>{const v=t==='mcq'?it.dataset.k:it.dataset.v;it.classList.toggle('picked',String(s.pick)===v);it.classList.toggle('right',rev&&correct(q,v));it.classList.toggle('wrong',rev&&String(s.pick)===v&&!correct(q,v))});
       let vd=$('.tk-verdict',q);if(!vd){vd=E('div',{class:'tk-x tk-verdict'});q.append(vd)}vd.className='tk-x tk-verdict';vd.innerHTML='';
-      if(t==='essay'){const sm=$('.tk-self',q);if(sm)sm.hidden=!rev;if(rev&&s.self){s.self==='ok'?ok++:bad++;vd.classList.add(s.self);vd.innerHTML=s.self==='ok'?I('ok',20)+' قيّمت إجابتك صحيحة':I('bad',20)+' قيّمت إجابتك غير مكتملة'}}
-      else if(rev){const c=correct(q,s.pick);c?ok++:bad++;vd.classList.add(c?'ok':'bad');vd.innerHTML=c?I('ok',20)+' إجابة صحيحة · Correct':I('bad',20)+' إجابة خاطئة · Incorrect'}});
+      if(t==='essay'){const sm=$('.tk-self',q);if(sm)sm.hidden=!rev;if(rev&&s.self){s.self==='ok'?ok++:bad++;vd.classList.add(s.self);vd.innerHTML=s.self==='ok'?I('ok',20)+L2(' قيّمت إجابتك صحيحة',' You marked this correct'):I('bad',20)+L2(' قيّمت إجابتك غير مكتملة',' You marked this incomplete')}}
+      else if(rev){const c=correct(q,s.pick);c?ok++:bad++;vd.classList.add(c?'ok':'bad');vd.innerHTML=c?I('ok',20)+L2(' إجابة صحيحة · Correct',' Correct'):I('bad',20)+L2(' إجابة خاطئة · Incorrect',' Incorrect')}});
     qz.classList.toggle('ar-on',!!S.quiz['ar'+qi]);
     const show=mode()==='instant'||submitted();
-    board.innerHTML=`<div class="s">${show?`<span class="ok">${I('ok',18)} ${ok}</span><span class="bad">${I('bad',18)} ${bad}</span><span class="m">من ${tot}</span>${submitted()||ans===tot?`<span class="pc">${Math.round(ok/tot*100)}%</span>`:''}`:`<span class="m">أجبت عن ${ans} من ${tot}</span>`}</div>
-      <div class="seg" role="group"><button data-q="instant" class="${mode()==='instant'?'on':''}">تصحيح فوري</button><button data-q="exam" class="${mode()==='exam'?'on':''}">وضع الاختبار</button></div>
-      ${mode()==='exam'&&!submitted()?`<button class="tk-btn pri" data-q="sub">${I('check',16)} تسليم وتصحيح</button>`:''}<button class="tk-btn" data-q="ar" title="إظهار/إخفاء العربية">${S.quiz['ar'+qi]?'إخفاء العربية':'عرض العربية'}</button><button class="tk-ib" data-q="reset" title="إعادة الاختبار">${I('reset',18)}</button>`}
+    board.innerHTML=`<div class="s">${show?`<span class="ok">${I('ok',18)} ${ok}</span><span class="bad">${I('bad',18)} ${bad}</span><span class="m">${L2('من','of')} ${tot}</span>${submitted()||ans===tot?`<span class="pc">${Math.round(ok/tot*100)}%</span>`:''}`:`<span class="m">${L2('أجبت عن','Answered')} ${ans} ${L2('من','of')} ${tot}</span>`}</div>
+      <div class="seg" role="group"><button data-q="instant" class="${mode()==='instant'?'on':''}">${L2('تصحيح فوري','Instant feedback')}</button><button data-q="exam" class="${mode()==='exam'?'on':''}">${L2('وضع الاختبار','Exam mode')}</button></div>
+      ${mode()==='exam'&&!submitted()?`<button class="tk-btn pri" data-q="sub">${I('check',16)} ${L2('تسليم وتصحيح','Submit')}</button>`:''}<button class="tk-btn" data-q="ar" title="Arabic · العربية">${S.quiz['ar'+qi]?L2('إخفاء العربية','Hide Arabic · إخفاء العربية'):L2('عرض العربية','Show Arabic · إظهار العربية')}</button><button class="tk-ib" data-q="reset" title="${L2('إعادة الاختبار','Reset')}">${I('reset',18)}</button>`}
   board.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.q;
     if(a==='ar'){S.quiz['ar'+qi]=!S.quiz['ar'+qi]}
     if(a==='instant'||a==='exam'){if(mode()===a)return;S.quiz[K]=a;delete S.quiz['sub'+qi]}
-    if(a==='sub'){const left=qs.filter(q=>{const s=S.quiz[q.dataset.qid]||{};return q.dataset.type==='essay'?!s.shown:s.pick===undefined}).length;if(left&&!confirm(`بقي ${left} سؤال بلا إجابة. تسليم على أي حال؟`))return;S.quiz['sub'+qi]=1;toast('تم التصحيح',{icon:'check'})}
-    if(a==='reset'){if(!confirm('مسح إجاباتك في هذا الاختبار؟'))return;qs.forEach(q=>{delete S.quiz[q.dataset.qid];const ta=$('.tk-essay',q);if(ta)ta.value=''});delete S.quiz['sub'+qi]}
+    if(a==='sub'){const left=qs.filter(q=>{const s=S.quiz[q.dataset.qid]||{};return q.dataset.type==='essay'?!s.shown:s.pick===undefined}).length;if(left&&!confirm(L2(`بقي ${left} سؤال بلا إجابة. تسليم على أي حال؟`,`${left} question(s) unanswered. Submit anyway?`)))return;S.quiz['sub'+qi]=1;toast(L2('تم التصحيح','Marked'),{icon:'check'})}
+    if(a==='reset'){if(!confirm(L2('مسح إجاباتك في هذا الاختبار؟','Clear your answers in this test?')))return;qs.forEach(q=>{delete S.quiz[q.dataset.qid];const ta=$('.tk-essay',q);if(ta)ta.value=''});delete S.quiz['sub'+qi]}
     save();render()});
   qs.forEach((q,i)=>{const id=qi+'-'+i,t=q.dataset.type;q.dataset.qid=id;const qt=$('.qt',q)||q.firstElementChild;
-    if(q.dataset.src){const a=E('a',{class:'tk-x tk-srcl',href:q.dataset.ref?'#'+q.dataset.ref:'#',title:'مصدر السؤال'},I('pin',15)+' '+esc(q.dataset.src));a.onclick=e=>{e.preventDefault();if(q.dataset.ref)jump($('#'+q.dataset.ref));else toast(q.dataset.src,{icon:'pin'})};qt.append(a)}
+    if(q.dataset.src){const a=E('a',{class:'tk-x tk-srcl',href:q.dataset.ref?'#'+q.dataset.ref:'#',title:L2('مصدر السؤال','Source')},I('pin',15)+' '+esc(q.dataset.src));a.onclick=e=>{e.preventDefault();if(q.dataset.ref)jump($('#'+q.dataset.ref));else toast(q.dataset.src,{icon:'pin'})};qt.append(a)}
     const pick=v=>{if(q.classList.contains('locked'))return;st(id).pick=v;save();render()};
     if(t==='mcq')$$('ol.opts>li',q).forEach((li,k)=>{li.dataset.k=k;li.tabIndex=0;li.addEventListener('click',()=>{if(getSelection().isCollapsed)pick(String(k))});li.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(String(k))}})});
-    if(t==='tf'){const r=E('div',{class:'tk-x tk-tf'},`<button data-v="true">${I('check',17)} True · صح</button><button data-v="false">${I('x',17)} False · خطأ</button>`);qt.after(r);$$('button',r).forEach(b=>b.onclick=()=>pick(b.dataset.v))}
-    if(t==='essay'){const ta=E('textarea',{class:'tk-x tk-essay',dir:'auto',placeholder:'Write your answer… اكتب إجابتك'});ta.value=(S.quiz[id]||{}).text||'';ta.oninput=()=>{st(id).text=ta.value;save()};
-      const r=E('div',{class:'tk-x tk-row'},`<button class="tk-btn pri">${I('eye',16)} أظهر الإجابة النموذجية</button><span class="tk-self" hidden><span class="tk-q">قيّم إجابتك:</span><button class="tk-btn" data-s="ok">${I('ok',16)} أصبت</button><button class="tk-btn" data-s="bad">${I('bad',16)} أخطأت</button></span>`);
-      qt.after(ta,r);$('button.pri',r).onclick=()=>{st(id).shown=1;save();render();if(mode()==='exam'&&!submitted())toast('ستظهر الإجابة النموذجية بعد التسليم')};
+    if(t==='tf'){const r=E('div',{class:'tk-x tk-tf'},`<button data-v="true">${I('check',17)} ${L2('True · صح','True')}</button><button data-v="false">${I('x',17)} ${L2('False · خطأ','False')}</button>`);qt.after(r);$$('button',r).forEach(b=>b.onclick=()=>pick(b.dataset.v))}
+    if(t==='essay'){const ta=E('textarea',{class:'tk-x tk-essay',dir:'auto',placeholder:L2('Write your answer… اكتب إجابتك','Write your answer…')});ta.value=(S.quiz[id]||{}).text||'';ta.oninput=()=>{st(id).text=ta.value;save()};
+      const r=E('div',{class:'tk-x tk-row'},`<button class="tk-btn pri">${I('eye',16)} ${L2('أظهر الإجابة النموذجية','Show model answer')}</button><span class="tk-self" hidden><span class="tk-q">${L2('قيّم إجابتك:','Rate yourself:')}</span><button class="tk-btn" data-s="ok">${I('ok',16)} ${L2('أصبت','Got it')}</button><button class="tk-btn" data-s="bad">${I('bad',16)} ${L2('أخطأت','Missed it')}</button></span>`);
+      qt.after(ta,r);$('button.pri',r).onclick=()=>{st(id).shown=1;save();render();if(mode()==='exam'&&!submitted())toast(L2('ستظهر الإجابة النموذجية بعد التسليم','The model answer appears after you submit'))};
       $$('.tk-self button',r).forEach(b=>b.onclick=()=>{st(id).self=b.dataset.s;save();render()})}});
   render()})}
 
@@ -297,7 +298,7 @@ let stk=null,erased=false;
 function eraseAt(x,y){const R=12;let hit=false;cache=cache.filter(([it,pts])=>{const r=R+WID[it.w]*(it.k==='m'?2:.5);if(pts.some(p=>Math.abs(p[0]-x)<r&&Math.abs(p[1]-y)<r&&Math.hypot(p[0]-x,p[1]-y)<r)){if(!hit&&!erased)inkSnap();hit=true;erased=true;S.ink=S.ink.filter(s=>s!==it);const el=svg.querySelector(`[data-id="${it.id}"]`);if(el)el.remove();return false}return true});
   tlay.querySelectorAll('.tb').forEach(t=>{const rc=t.getBoundingClientRect();if(x-scrollX>=rc.left-4&&x-scrollX<=rc.right+4&&y-scrollY>=rc.top-4&&y-scrollY<=rc.bottom+4){if(!erased)inkSnap();erased=true;S.ink=S.ink.filter(s=>s.id!==t.dataset.id);t.remove()}});if(hit)save()}
 ink.addEventListener('pointerdown',e=>{if(!pen.on||e.button>0)return;if(e.target.closest('.tb'))return;const x=e.pageX,y=e.pageY;
-  if(pen.tool==='text'){e.preventDefault();const a=anchorAt(x,y);if(!a)return;inkSnap();const it={id:newId(),k:'t',a:a[0],x:r4((x-a[1].l)/a[1].w),y:r4((y-a[1].t-10)/a[1].h),c:pen.c,w:pen.w,t:''};S.ink.push(it);const t=textBox(it,x,y-10);t.contentEditable='true';tlay.append(t);setTimeout(()=>t.focus(),0);return}
+  if(pen.tool==='text'){e.preventDefault();const a=anchorAt(x,y);if(!a)return;inkSnap();const it={id:newId(),k:'t',a:a[0],x:r4((x-a[1].l)/a[1].w),y:r4((y-a[1].t-10)/a[1].h),c:pen.c,w:pen.w,t:''};S.ink.push(it);const t=textBox(it,x,y-10);t.contentEditable='true';tlay.append(t);t.focus();setTimeout(()=>{if(document.activeElement!==t)t.focus()},0);return}
   e.preventDefault();ink.setPointerCapture(e.pointerId);if(pen.tool==='eraser'){erased=false;eraseAt(x,y);return}
   stk={pts:[[x,y]],k:pen.tool==='marker'?'m':'p',c:pen.c,w:pen.w};const lv=svg.querySelector('.live');lv.setAttribute('d','');for(const[k,v]of Object.entries({stroke:INK[pen.c],'stroke-width':WID[pen.w]*(stk.k==='m'?4:1),'stroke-opacity':stk.k==='m'?.35:1,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'}))lv.setAttribute(k,v)});
 ink.addEventListener('pointermove',e=>{if(!pen.on)return;if(pen.tool==='eraser'&&e.buttons){eraseAt(e.pageX,e.pageY);return}if(!stk)return;
@@ -316,8 +317,9 @@ dbar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)retur
   if(d.t)setTool(d.t);else if(d.c){pen.c=d.c;if(pen.tool==='eraser')setTool('pen');styleFocused()}else if(d.w){pen.w=+d.w;styleFocused()}
   else if(d.a==='undo')inkUndo();else if(d.a==='redo')inkRedo();else if(d.a==='clear'){if(S.ink.length){inkSnap();S.ink=[];tlay.innerHTML='';renderInk();save();toast('مُسح كل الرسم',{icon:'trash'})}}else if(d.a==='off')drawMode(false);drawBar()});
 function styleFocused(){const t=document.activeElement;if(t&&t.classList&&t.classList.contains('tb')){const it=S.ink.find(x=>x.id===t.dataset.id);if(it){it.c=pen.c;it.w=pen.w;t.style.color=INK[pen.c];t.style.fontSize=[14,18,24][pen.w]+'px';save()}}}
-function setTool(t){pen.tool=t;ink.dataset.tool=t;tlay.querySelectorAll('.tb').forEach(x=>x.contentEditable=t==='text'?'true':'false');drawBar()}
-function drawMode(v){pen.on=v;document.body.classList.toggle('tk-drawing',v);$('[data-b=draw]').classList.toggle('on',v);if(v){hidePop();getSelection().removeAllRanges();setTool(pen.tool);toast('وضع الرسم: ارسم على الصفحة، Esc للخروج',{icon:'draw',ms:2200})}else{tlay.querySelectorAll('.tb').forEach(x=>{x.contentEditable='false';x.blur()})}}
+const dropEmpty=()=>{const n=S.ink.length;S.ink=S.ink.filter(x=>x.k!=='t'||(x.t||'').trim()||(document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.id===x.id));if(S.ink.length!==n){tlay.innerHTML='';renderInk();save()}};
+function setTool(t){dropEmpty();pen.tool=t;ink.dataset.tool=t;tlay.querySelectorAll('.tb').forEach(x=>x.contentEditable=t==='text'?'true':'false');drawBar()}
+function drawMode(v){if(!v){document.activeElement&&document.activeElement.blur&&document.activeElement.blur();dropEmpty()}pen.on=v;document.body.classList.toggle('tk-drawing',v);$('[data-b=draw]').classList.toggle('on',v);if(v){hidePop();getSelection().removeAllRanges();setTool(pen.tool);toast('وضع الرسم: ارسم على الصفحة، Esc للخروج',{icon:'draw',ms:2200})}else{tlay.querySelectorAll('.tb').forEach(x=>{x.contentEditable='false';x.blur()})}}
 if('ResizeObserver'in window)new ResizeObserver(renderInk).observe(ROOT);addEventListener('load',renderInk);
 
 /* ---------- whiteboard (real Excalidraw, loaded on first open) ---------- */

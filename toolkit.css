@@ -238,3 +238,35 @@ body.tk-board-open #tk-bar,body.tk-board-open #tk-draw{display:none}
 @media(max-width:700px){#tk-draw{bottom:64px}}
 @media print{#tk-draw,#tk-board{display:none!important}#tk-ink{display:block!important}}
 @media(max-width:700px){#tk-draw{left:8px;right:8px;transform:none;max-width:none;bottom:62px}#tk-draw button{width:34px;height:34px}body.tk-drawing #tk-toast{bottom:170px}}
+.quiz:not(.ar-on) .q [dir=rtl]:not(.tk-x){display:none}
+/* math */
+.mx{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;font-size:1.08em;white-space:nowrap;unicode-bidi:isolate}
+.mx sub,.mx sup{font-size:.7em}
+.mx .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .2em}
+.mx .fr>.nu{padding:0 .25em .05em;border-bottom:1.5px solid currentColor}
+.mx .fr>.de{padding:.05em .25em 0}
+.law{--lc:#7048E8;--ls:#F3F0FF;border:2.5px solid var(--lc);background:var(--ls);border-radius:16px;padding:1rem 1.3rem;margin:1.4rem 0;max-width:46rem}
+html[data-theme=dark] .law{--lc:#B197FC;--ls:#231C3D}
+.law .lh{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:var(--lc);font-weight:800;font-size:.92rem;margin-bottom:.5rem}
+.law .lf{text-align:center;font-size:1.55rem;color:var(--lc);padding:.6rem .5rem;margin:.2rem 0 .6rem;border:1.5px dashed var(--lc);border-radius:10px;background:var(--surface);overflow-x:auto}
+.law .lf .mx{white-space:nowrap}
+.law table.lv{margin:.5rem 0;font-size:.95rem}
+.law table.lv td .a{display:block;color:var(--muted);font-size:.92em}
+.law .lw{margin:.5rem 0 0;max-width:none}
+ol.steps{list-style:none;counter-reset:st;padding:0;margin:.8rem 0;max-width:46rem}
+ol.steps>li{counter-increment:st;position:relative;padding:.5rem .8rem .5rem 3.2rem;border-left:3px solid var(--accent-soft);margin:.35rem 0}
+ol.steps>li::before{content:"Step " counter(st);position:absolute;left:.5rem;top:.6rem;font-size:.68rem;font-weight:800;color:var(--accent);width:2.4rem;line-height:1.1}
+ol.steps .sx{font-size:1.15rem;overflow-x:auto}
+ol.steps .sn{color:var(--muted);font-size:.92rem;margin-top:.15rem}
+.ans,.chk{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;border:2px solid var(--ok);background:var(--ok-soft);border-radius:12px;padding:.6rem 1rem;margin:.6rem 0;max-width:46rem;font-size:1.15rem;font-weight:700}
+.chk{border-style:dashed;border-color:var(--line);background:var(--surface);font-weight:500;font-size:1rem}
+.ans .lb,.chk .lb{font-size:.75rem;font-weight:800;color:var(--ok);text-transform:uppercase;letter-spacing:.04em}
+.chk .lb{color:var(--muted)}
+.ans .aw,.chk .aw{font-size:.95rem;font-weight:500;color:var(--muted)}
+.solved{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.2rem 1.4rem;margin:1.4rem 0;max-width:46rem}
+.solved h4 .src{font-size:.8rem;color:var(--accent);font-weight:600}
+.solved .gf{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;background:var(--paper);border-radius:12px;padding:.7rem 1rem;margin:.6rem 0}
+.solved .gf ul{margin:.2rem 0 0;padding-left:1.1rem}.solved .gf p{margin:.2rem 0 0}
+.quiz .model ol.steps,.quiz .why ol.steps{margin:.4rem 0}
+.quiz:not(.ar-on) .q .sn.a{display:none}
+@media(max-width:600px){.solved .gf{grid-template-columns:1fr}.law .lf{font-size:1.25rem}}
