@@ -78,6 +78,7 @@ def add_toolkit(path, chapter=None, gloss=None, quiz_lang=None, symbols=None, tk
     if gloss:
         import json
         meta += '<script type="application/json" id="tk-gloss">' + json.dumps(gloss, ensure_ascii=False).replace("<", "\\u003c") + "</script>"
+    meta += '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap">'
     s = s.replace("</head>", f"{meta}<style>{css}</style>\n</head>", 1)
     if 'class="tk-sig"' not in s:
         s = s.replace("</body>", '<footer class="tk-sig tk-x">Eyad Al-Mahrouqi · @q7r_9</footer>\n</body>', 1)
