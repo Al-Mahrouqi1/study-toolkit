@@ -117,7 +117,10 @@ A summary is not the slides in order. Rebuild the chapter around its concepts an
 7. **Add the study toolkit, check, then deliver.** After `write_page()` call
    `add_toolkit(out, chapter="Chapter N: Title", gloss={...})` (add `quiz_lang="en"` for tests).
    `gloss` maps every course term and hard word in the chapter to its Arabic meaning (English → Arabic);
-   it gives instant translation even offline. If the download fails, deliver without the toolkit and say
+   it gives instant translation even offline and is shown first, above the machine translation, so make it
+   precise: the meaning **in this course** (not a literal or everyday meaning), the Arabic term Arabic
+   textbooks use, multi-word terms as their own entries ("weak entity", "clock rate"), 40–120 entries per
+   chapter, keys in lowercase singular. If the download fails, deliver without the toolkit and say
    so in one line.
    Run `check_html()` once (tag balance, image count) and check against the rules in this file; save to
    `/mnt/user-data/outputs/`, call `present_files`.
