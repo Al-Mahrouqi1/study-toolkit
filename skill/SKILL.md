@@ -133,6 +133,10 @@ The user wants complete but compact summaries and quick replies.
   (shows meaning, Arabic, unit). For symbols used outside a `law()` box, pass
   `add_toolkit(..., symbols={"V": ("Voltage", "الجهد", "V")})`. Use the same symbol spelling in every
   `m()` (e.g. `R_th` both in the law and in the steps).
+- **Gaps flagged, never filled**: cut-off text, contradictions between slides, terms used but not defined
+  in the chapter, pictures that cannot be interpreted. Use `warn()` with the exact line
+  "This is not covered in the provided chapters." where relevant. Any outside knowledge, only if truly
+  needed, goes under "Additional explanation — not from the provided material:".
 
 ## Math accuracy (strict)
 
@@ -142,10 +146,6 @@ The user wants complete but compact summaries and quick replies.
 - Use the course's exact formula and symbols; if the slides show two forms, show both and how they connect.
 - Re-derive each answer a second way (other formula, units check, or plugging back) before publishing;
   if the two disagree, fix it before writing.
-- **Gaps flagged, never filled**: cut-off text, contradictions between slides, terms used but not defined
-  in the chapter, pictures that cannot be interpreted. Use `warn()` with the exact line
-  "This is not covered in the provided chapters." where relevant. Any outside knowledge, only if truly
-  needed, goes under "Additional explanation — not from the provided material:".
 
 ## Language and look
 
