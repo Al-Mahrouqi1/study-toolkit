@@ -500,3 +500,4 @@ html[data-theme=dark]{--gold:#8EA8FF;--gold-soft:#161D33;--accent:#8EA8FF;--acce
 .tk-cs{font-size:13.5px;color:var(--muted);margin:.25rem 0 .15rem}
 .tk-cs b{color:var(--ink);background:var(--accent-soft);border-radius:3px;padding:0 2px}
 .tk-ct{font-size:15px;margin:0}
+#tk-ink.probe,#tk-ink.probe *{pointer-events:none!important}
