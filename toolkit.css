@@ -484,3 +484,19 @@ body.tk-bar-hide #tk-bar{transform:translateY(-140%);opacity:0;pointer-events:no
 /* blue accent instead of gold */
 :root{--gold:#2F5BEA;--gold-soft:#EEF2FE;--accent:#2F5BEA;--accent-soft:#EEF2FE}
 html[data-theme=dark]{--gold:#8EA8FF;--gold-soft:#161D33;--accent:#8EA8FF;--accent-soft:#161D33}
+/* translation panel v2 */
+.tk-blk{margin-top:.7rem}
+.tk-blk .tk-tag{margin-top:0}
+.tk-blk.gl .tk-ans{color:var(--accent)}
+.tk-alts{font-size:13px;color:var(--muted);margin-top:.35rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tk-alts span,.tk-means span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:.05rem .55rem;font-size:13.5px;color:var(--ink)}
+.tk-means{margin-top:.5rem;display:grid;gap:.35rem}
+.tk-means div{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tk-means i{font-style:normal;font-size:12px;font-weight:700;color:var(--muted);min-width:3.2rem}
+.tk-terms{list-style:none;padding:0;margin:.3rem 0 0}
+.tk-terms li{display:flex;justify-content:space-between;gap:.8rem;padding:.3rem 0;border-bottom:1px solid var(--line);font-size:14px}
+.tk-terms li:last-child{border-bottom:0}
+.tk-terms b{font-family:"Manrope",system-ui,sans-serif}
+.tk-cs{font-size:13.5px;color:var(--muted);margin:.25rem 0 .15rem}
+.tk-cs b{color:var(--ink);background:var(--accent-soft);border-radius:3px;padding:0 2px}
+.tk-ct{font-size:15px;margin:0}

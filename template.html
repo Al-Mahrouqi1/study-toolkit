@@ -570,6 +570,22 @@ body.tk-bar-hide #tk-bar{transform:translateY(-140%);opacity:0;pointer-events:no
 /* blue accent instead of gold */
 :root{--gold:#2F5BEA;--gold-soft:#EEF2FE;--accent:#2F5BEA;--accent-soft:#EEF2FE}
 html[data-theme=dark]{--gold:#8EA8FF;--gold-soft:#161D33;--accent:#8EA8FF;--accent-soft:#161D33}
+/* translation panel v2 */
+.tk-blk{margin-top:.7rem}
+.tk-blk .tk-tag{margin-top:0}
+.tk-blk.gl .tk-ans{color:var(--accent)}
+.tk-alts{font-size:13px;color:var(--muted);margin-top:.35rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tk-alts span,.tk-means span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:.05rem .55rem;font-size:13.5px;color:var(--ink)}
+.tk-means{margin-top:.5rem;display:grid;gap:.35rem}
+.tk-means div{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tk-means i{font-style:normal;font-size:12px;font-weight:700;color:var(--muted);min-width:3.2rem}
+.tk-terms{list-style:none;padding:0;margin:.3rem 0 0}
+.tk-terms li{display:flex;justify-content:space-between;gap:.8rem;padding:.3rem 0;border-bottom:1px solid var(--line);font-size:14px}
+.tk-terms li:last-child{border-bottom:0}
+.tk-terms b{font-family:"Manrope",system-ui,sans-serif}
+.tk-cs{font-size:13.5px;color:var(--muted);margin:.25rem 0 .15rem}
+.tk-cs b{color:var(--ink);background:var(--accent-soft);border-radius:3px;padding:0 2px}
+.tk-ct{font-size:15px;margin:0}
 </style>
 </head>
 <body>
@@ -686,32 +702,48 @@ function copy(t){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.r
 
 /* ---------- translation ---------- */
 const tmo=(u,ms=6000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(t))};
-async function gtx(q,tl){const r=await tmo('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+tl+'&dt=t&q='+encodeURIComponent(q));if(!r.ok)throw 0;const j=await r.json();return j[0].map(x=>x[0]).join('')}
-async function mym(q,tl,sl){const r=await tmo('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q.slice(0,480))+'&langpair='+sl+'|'+tl);const j=await r.json();const t=j&&j.responseData&&j.responseData.translatedText;if(!t||/MYMEMORY WARNING|INVALID/i.test(t))throw 0;return t}
-async function lgv(q,tl){const r=await tmo('https://lingva.ml/api/v1/auto/'+tl+'/'+encodeURIComponent(q.slice(0,1000)));if(!r.ok)throw 0;const j=await r.json();if(!j.translation)throw 0;return j.translation}
-async function online(q,tl,sl){for(const f of[()=>gtx(q,tl),()=>mym(q,tl,sl),()=>lgv(q,tl)]){try{const t=await f();if(t)return t}catch(e){}}return ''}
+async function gtx(q,tl,sl){const r=await tmo('https://translate.googleapis.com/translate_a/single?client=gtx&sl='+sl+'&tl='+tl+'&hl=ar&dj=1&dt=t&dt=bd&dt=at&q='+encodeURIComponent(q));if(!r.ok)throw 0;const j=await r.json();
+  if(Array.isArray(j)){const t=(j[0]||[]).map(x=>x&&x[0]||'').join('');if(!t)throw 0;return{t,dict:[],alts:[]}}
+  const t=(j.sentences||[]).map(s=>s.trans||'').join('').trim();if(!t)throw 0;
+  const dict=(j.dict||[]).map(d=>({pos:d.pos||'',terms:[...(d.entry||[])].sort((a,b)=>(b.score||0)-(a.score||0)).map(e=>e.word).filter(Boolean).slice(0,6)})).filter(d=>d.terms.length);
+  const at=j.alternative_translations||[],alts=at.length===1?(at[0].alternative||[]).map(a=>a.word_postproc).filter(w=>w&&w!==t).slice(0,3):[];return{t,dict,alts}}
+async function mym(q,tl,sl){const r=await tmo('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q.slice(0,480))+'&langpair='+sl+'|'+tl);const j=await r.json();const t=j&&j.responseData&&j.responseData.translatedText;if(!t||/MYMEMORY WARNING|INVALID/i.test(t))throw 0;return{t,dict:[],alts:[]}}
+async function lgv(q,tl,sl){const r=await tmo('https://lingva.ml/api/v1/'+sl+'/'+tl+'/'+encodeURIComponent(q.slice(0,1000)));if(!r.ok)throw 0;const j=await r.json();if(!j.translation)throw 0;return{t:j.translation,dict:[],alts:[]}}
+async function online(q,tl,sl){for(const f of[gtx,mym,lgv]){try{const t=await f(q,tl,sl);if(t&&t.t)return t}catch(e){}}return null}
 async function dict(w){try{const r=await tmo('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(w.toLowerCase()));if(!r.ok)return null;return (await r.json())[0]}catch(e){return null}}
 let GL={};try{const g=$('#tk-gloss');if(g)for(const[k,v]of Object.entries(JSON.parse(g.textContent)))GL[k.toLowerCase().trim()]=v}catch(e){}
 const GLR={};for(const[k,v]of Object.entries(GL))GLR[String(v).trim()]=k;
-function gloss(q){const k=q.toLowerCase().replace(/[.,;:!?()"“”]/g,'').trim();if(GL[k])return GL[k];for(const s of[k.replace(/ies$/,'y'),k.replace(/es$/,''),k.replace(/s$/,'')])if(GL[s])return GL[s];if(GLR[q.trim()])return GLR[q.trim()];try{const sk=symOf(q);if(sk)return SYM[sk][1]||SYM[sk][0]}catch(e){}return ''}
+const norm=q=>q.toLowerCase().replace(/[.,;:!?()"“”«»]/g,'').replace(/\s+/g,' ').trim();
+function gloss(q){const k=norm(q);if(GL[k])return GL[k];for(const s of[k.replace(/ies$/,'y'),k.replace(/es$/,''),k.replace(/s$/,'')])if(GL[s])return GL[s];if(GLR[q.trim()])return GLR[q.trim()];try{const sk=symOf(q);if(sk)return SYM[sk][1]||SYM[sk][0]}catch(e){}return ''}
+/* course terms that appear inside a longer selection, longest first, no overlaps */
+function termsIn(q){const low=' '+norm(q)+' ',out=[],used=[];Object.keys(GL).sort((a,b)=>b.length-a.length).forEach(k=>{if(k.length<2)return;const rx=new RegExp('(^|[^a-z0-9])'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(e?s)?(?![a-z0-9])','i');const m=rx.exec(low);if(!m)return;const a=m.index+m[1].length,b=a+k.length;if(used.some(([x,y])=>a<y&&b>x))return;used.push([a,b]);out.push([k,GL[k],a])});return out.sort((x,y)=>x[2]-y[2])}
 function twin(el){if(!el)return '';if(el.nodeType!==1)el=el.parentElement;const p=el.closest('.e,.a');if(!p)return '';const box=p.parentElement,o=box&&$(p.classList.contains('e')?':scope > .a':':scope > .e',box);return o?o.textContent.trim():''}
+function ctxOf(el,q){try{if(!el)return '';if(el.nodeType!==1)el=el.parentElement;const b=el.closest('p,li,q,td,dd,dt,h4,.cv,.e,.a');if(!b)return '';const t=b.textContent.replace(/\s+/g,' ').trim();const parts=t.match(/[^.!?؟]+[.!?؟]?/g)||[t];const hit=parts.find(x=>x.toLowerCase().includes(q.toLowerCase()))||'';const c=hit.trim();return c.length>q.length+3?c:''}catch(e){return ''}}
+function sentenceAt(s,e){const T=fullText();let a=s,b=e;while(a>0&&!/[.!?؟\n]/.test(T[a-1])&&s-a<300)a--;while(b<T.length&&!/[.!?؟\n]/.test(T[b])&&b-e<300)b++;const t=T.slice(a,b+1).replace(/\s+/g,' ').trim();return t.length>T.slice(s,e).trim().length+3?t:''}
+const tidyAr=t=>t.replace(/,/g,'،').replace(/\?/g,'؟').replace(/;/g,'؛').replace(/\s+([،؛؟.!:])/g,'$1').replace(/\s{2,}/g,' ').trim();
 let trTok=0;
-async function translate(q,el){q=(q||'').replace(/\s+/g,' ').trim();if(!q)return;openPanel('tr');const tok=++trTok,ar=/[؀-ۿ]/.test(q),out=$('#tk-trout'),tl=ar?'en':'ar',src=el?source(el):null;
-  const g=gloss(q),tw=twin(el);
+async function translate(q,el,ctx){q=(q||'').replace(/\s+/g,' ').trim();if(!q)return;openPanel('tr');const tok=++trTok,ar=/[\u0600-\u06FF]/.test(q),out=$('#tk-trout'),tl=ar?'en':'ar',sl=ar?'ar':'en',src=el?source(el):null;
+  const word=!/\s/.test(q)||q.split(' ').length<=2,g=gloss(q),terms=word?[]:termsIn(q),tw=twin(el);
+  const blk=(cls,label,html)=>`<div class="tk-blk ${cls}"><div class="tk-tag">${label}</div>${html}</div>`;
   out.innerHTML=`<div class="tk-card"><div class="tk-q" dir="auto">${esc(q.length>400?q.slice(0,400)+'…':q)}</div>${src&&src.where?`<span class="tk-src">${I('pin',14)} ${srcLine(src)}</span>`:''}
-   ${g?`<div class="tk-tag">${I('star',13)} من مسرد الفصل</div><div class="tk-ans" dir="${ar?'ltr':'rtl'}">${esc(g)}</div>`:''}
-   <div class="tk-on">${g?'<div class="tk-tag">ترجمة آلية</div>':''}<div class="tk-ans${g?' sm':''}" dir="${ar?'ltr':'rtl'}"><span class="tk-load"></span></div></div><div class="tk-row"></div><div class="tk-dict" dir="ltr"></div>
+   ${g?blk('gl',`${I('star',13)} معناه في المادة`,`<div class="tk-ans" dir="${ar?'ltr':'rtl'}">${esc(g)}</div>`):''}
+   <div class="tk-on">${blk('mt',g?'ترجمة عامة':'الترجمة',`<div class="tk-ans${g?' sm':''}" dir="${ar?'ltr':'rtl'}"><span class="tk-load"></span></div>`)}</div>
+   ${terms.length?blk('terms',`${I('star',13)} مصطلحات المادة في النص`,`<ul class="tk-terms">${terms.map(([k,v])=>`<li><b dir="ltr">${esc(k)}</b><span dir="rtl">${esc(v)}</span></li>`).join('')}</ul>`):''}
+   <div class="tk-ctx"></div><div class="tk-row"></div><div class="tk-dict" dir="ltr"></div>
    ${tw&&tw!==q?`<details class="tk-twin"><summary>${I('lang',14)} المقابل في الملخص</summary><p dir="auto">${esc(tw)}</p></details>`:''}</div>`;
-  const t=await online(q,tl,ar?'ar':'en');if(tok!==trTok)return;const box=$('.tk-on',out),final=t||g,en=ar?(final||''):q,arT=ar?q:(final||'');
-  if(!t){const gt='https://translate.google.com/?sl=auto&tl='+tl+'&op=translate&text='+encodeURIComponent(q.slice(0,4000));
+  const res=await online(q,tl,sl);if(tok!==trTok)return;const box=$('.tk-on',out);const t=res?(ar?res.t:tidyAr(res.t)):'';const final=g||t,en=ar?(t||''):q,arT=ar?q:final;
+  if(!res){const gt='https://translate.google.com/?sl='+sl+'&tl='+tl+'&op=translate&text='+encodeURIComponent(q.slice(0,4000));
     box.innerHTML=`<div class="tk-err">${I('alert',17)} الترجمة الآلية غير متاحة ${top!==self?'— الملف مفتوح داخل معاينة تمنع الاتصال، افتحه في المتصفح مباشرة':'— تحقّق من الاتصال بالإنترنت'}</div><a class="tk-btn" href="${gt}" target="_blank" rel="noopener">${I('go',15)} افتح في Google Translate</a>`}
-  else $('.tk-ans',box).textContent=t;
+  else{$('.tk-ans',box).textContent=t;
+    if(res.alts.length)box.insertAdjacentHTML('beforeend',`<div class="tk-alts">صياغات أخرى: ${res.alts.map(a=>`<span dir="auto">${esc(ar?a:tidyAr(a))}</span>`).join('')}</div>`);
+    if(res.dict.length)box.insertAdjacentHTML('beforeend',`<div class="tk-means">${res.dict.slice(0,3).map(d=>`<div><i>${esc(d.pos)}</i>${d.terms.map(x=>`<span dir="auto">${esc(x)}</span>`).join('')}</div>`).join('')}</div>`)}
   const row=$('.tk-row',out);row.innerHTML=`<button class="tk-btn">${I('vol',16)} نطق</button>${final?`<button class="tk-btn pri">${I('star',16)} احفظ</button><button class="tk-btn">${I('copy',16)} نسخ</button>`:''}`;
-  const rb=$$('button',row);rb[0].onclick=()=>say(ar&&!final?q:en||q);
-  if(final){rb[2].onclick=()=>copy(final);rb[1].onclick=()=>{if(!S.words.some(w=>w.en.toLowerCase()===en.toLowerCase()))S.words.unshift({en,ar:arT,src:src?src.where:'',t:Date.now()});save();renderWords();rb[1].innerHTML=I('check',16)+' محفوظة';rb[1].disabled=true}}
-  if(/^[A-Za-z][A-Za-z'-]*$/.test(en)&&en.length<30){const d=await dict(en);if(tok!==trTok||!d)return;const ph=(d.phonetics||[]).find(p=>p.text);
+  const rb=$$('button',row);rb[0].onclick=()=>say(ar?(en||q):q);
+  if(final){rb[2].onclick=()=>copy(ar?en:final);rb[1].onclick=()=>{const E2=ar?en:q,A2=ar?q:final;if(E2&&!S.words.some(w=>w.en.toLowerCase()===E2.toLowerCase()))S.words.unshift({en:E2,ar:A2,src:src?src.where:'',t:Date.now()});save();renderWords();rb[1].innerHTML=I('check',16)+' محفوظة';rb[1].disabled=true}}
+  if(word&&ctx&&!ar){const cr=await online(ctx,'ar','en');if(tok!==trTok)return;if(cr)$('.tk-ctx',out).innerHTML=blk('cx','في سياق الجملة',`<p class="tk-cs" dir="ltr">${esc(ctx).replace(new RegExp('\\b'+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'),m=>`<b>${m}</b>`)}</p><p class="tk-ct" dir="rtl">${esc(tidyAr(cr.t))}</p>`)}
+  if(!ar&&/^[A-Za-z][A-Za-z'-]*$/.test(q)&&q.length<30){const d=await dict(q);if(tok!==trTok||!d)return;const ph=(d.phonetics||[]).find(p=>p.text);
     let h=ph?`<div class="tk-ph">${esc(ph.text)}</div>`:'';(d.meanings||[]).slice(0,3).forEach(m=>{const df=(m.definitions||[])[0];if(df)h+=`<div class="tk-def"><i>${esc(m.partOfSpeech)}</i> — ${esc(df.definition)}</div>`});
-    $('.tk-dict',out).innerHTML=h?`<div class="tk-dh">Dictionary</div>`+h:''}}
+    $('.tk-dict',out).innerHTML=h?`<div class="tk-dh">English dictionary</div>`+h:''}}
 $('#tk-trin').addEventListener('keydown',e=>{if(e.key==='Enter')translate(e.target.value)});
 function renderWords(){const b=$('#tk-words');b.innerHTML=S.words.length?'':'<div class="tk-empty">احفظ الكلمات من الترجمة لتراجعها هنا.</div>';
   S.words.forEach((w,i)=>{const r=E('div',{class:'tk-word'},`<button class="tk-ib" title="نطق">${I('vol',16)}</button><span class="en" dir="ltr">${esc(w.en)}</span><span class="ar" dir="auto">${esc(w.ar)}</span><button class="tk-ib" title="حذف">${I('x',15)}</button>`);
@@ -791,7 +823,7 @@ function act(a,b){const h=popMark?S.hl.find(x=>x.id===popMark.dataset.id):null;l
   const done=()=>{getSelection().removeAllRanges();hidePop()};
   if(a==='c'){if(h){recolor(h.id,b.dataset.c);showPop(popMark.getBoundingClientRect(),'mark')}else{addHl(selRange,b.dataset.c);done()}}
   else if(a==='note'){const t=h||addHl(selRange,'y');done();if(t){openPanel('notes');renderNotes(t.id)}}
-  else if(a==='tr'){translate(text,anchorEl);done()}
+  else if(a==='tr'){translate(text,anchorEl,ctxOf(anchorEl,text));done()}
   else if(a==='say')say(text);
   else if(a==='copy'){copy(text);done()}
   else if(a==='src'){const s=source(anchorEl),i=$('.info',pop);i.hidden=false;i.innerHTML=I('pin',15)+' '+(srcLine(s)||'لا يوجد مرجع لهذا الجزء');place((popMark||selRange).getBoundingClientRect())}
