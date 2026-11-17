@@ -129,6 +129,10 @@ The user wants complete but compact summaries and quick replies.
   operation → result), a short plain-words reason under each step, a boxed answer with unit, and a check.
   Write all math with `m()`: `x_i` / `x_{avg}` subscript, `x^2` / `10^{-9}` power, `[[a || b]]`
   fraction (nestable), `*` → ×. Put numbers inside sentences through `m()` too.
+  Every symbol in a law's `variables` becomes hoverable/tappable everywhere it appears in `m()` math
+  (shows meaning, Arabic, unit). For symbols used outside a `law()` box, pass
+  `add_toolkit(..., symbols={"V": ("Voltage", "الجهد", "V")})`. Use the same symbol spelling in every
+  `m()` (e.g. `R_th` both in the law and in the steps).
 
 ## Math accuracy (strict)
 

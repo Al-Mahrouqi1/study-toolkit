@@ -270,3 +270,16 @@ ol.steps .sn{color:var(--muted);font-size:.92rem;margin-top:.15rem}
 .quiz .model ol.steps,.quiz .why ol.steps{margin:.4rem 0}
 .quiz:not(.ar-on) .q .sn.a{display:none}
 @media(max-width:600px){.solved .gf{grid-template-columns:1fr}.law .lf{font-size:1.25rem}}
+/* formula symbols */
+.mx .sym{cursor:help;border-radius:3px;transition:background .12s;text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:.2em;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent)}
+.mx sub.sym{text-decoration:none}
+.mx .sym:hover,.mx .sym.on{background:var(--accent-soft);color:var(--accent)}
+#tk-tip{position:fixed;z-index:72;display:none;background:var(--ink);color:var(--paper);border-radius:12px;padding:.55rem .8rem;max-width:18rem;box-shadow:var(--shadow);pointer-events:none;font-size:14px;line-height:1.45}
+#tk-tip.on{display:block;animation:tkpop .12s ease-out}
+#tk-tip .sy{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.35rem;line-height:1.1}
+#tk-tip .sy sub{font-size:.65em}
+#tk-tip .en{font-weight:700}
+#tk-tip .ar{opacity:.85}
+#tk-tip .un{opacity:.75;font-size:12.5px;margin-top:.15rem}
+#tk-pop .syminfo{display:flex;align-items:center;gap:.6rem;padding:.35rem .6rem .55rem;margin-bottom:4px;border-bottom:1px solid var(--line);font-size:14px}
+#tk-pop .syminfo .sy{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.3rem;color:var(--accent)}

@@ -56,7 +56,9 @@ def quiz(title_en, title_ar, questions, sid="quiz", mode="instant", intro=None):
     return (f'<section id="{sid}" class="quiz" data-mode="{mode}"><h2><span class="t"><span class="te" dir="ltr">{title_en}</span>'
             f'<span class="ta" dir="rtl">{title_ar}</span></span></h2>{it}{qs}</section>')
 
-def add_toolkit(path, chapter=None, gloss=None, quiz_lang=None, tk_id=None, css=None, js=None):
+def add_toolkit(path, chapter=None, gloss=None, quiz_lang=None, symbols=None, tk_id=None, css=None, js=None):
+    """symbols = {"V": ("Voltage", "الجهد", "V"), "R_th": ("Thevenin resistance", "مقاومة ثيفنن", "Ω")} for symbols
+    used outside a law() box. Symbols from law() variables are picked up automatically."""
     """Inject the study toolkit (translator, highlighter, notes, search, sources, TOC, dark mode, quiz)
     into a page written by write_page(). chapter = label shown in source references."""
     css = css or open(os.path.join(_HERE, "toolkit.css"), encoding="utf-8").read()
@@ -65,6 +67,10 @@ def add_toolkit(path, chapter=None, gloss=None, quiz_lang=None, tk_id=None, css=
     meta = ""
     if chapter:
         meta += f'<meta name="chapter" content="{_h.escape(chapter)}">'
+    if symbols:
+        import json
+        sy = {k.replace("{", "").replace("}", ""): list(v) for k, v in symbols.items()}
+        meta += '<script type="application/json" id="tk-syms">' + json.dumps(sy, ensure_ascii=False).replace("<", "\\u003c") + "</script>"
     if quiz_lang:
         meta += f'<meta name="tk-quiz-lang" content="{quiz_lang}">'
     if tk_id:
@@ -105,7 +111,9 @@ def law(name_en, name_ar, expr, variables=(), when_en="", when_ar="", note_en=""
     variables = [(symbol, meaning_en, meaning_ar, unit), ...]"""
     rows = "".join(f'<tr><td>{m(v[0])}</td><td><span dir="ltr">{v[1]}</span>' + (f'<span class="a" dir="rtl">{v[2]}</span>' if len(v) > 2 and v[2] else "")
                    + f'</td><td dir="ltr">{v[3] if len(v) > 3 else ""}</td></tr>' for v in variables)
-    out = (f'<div class="law"><div class="lh"><span dir="ltr">Law · {name_en}</span><span dir="rtl">القانون · {name_ar}</span></div>'
+    import json as _j
+    syms = {v[0].replace("{", "").replace("}", "").strip(): [v[1], v[2] if len(v) > 2 else "", v[3] if len(v) > 3 else ""] for v in variables}
+    out = (f'<div class="law" data-syms="{_h.escape(_j.dumps(syms, ensure_ascii=False))}"><div class="lh"><span dir="ltr">Law · {name_en}</span><span dir="rtl">القانون · {name_ar}</span></div>'
            f'<div class="lf">{m(expr)}</div>')
     if rows:
         out += f'<table class="lv" dir="ltr"><thead><tr><th>Symbol</th><th>Meaning · المعنى</th><th>Unit</th></tr></thead><tbody>{rows}</tbody></table>'
