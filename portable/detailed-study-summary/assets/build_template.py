@@ -16,7 +16,7 @@ OUT = os.path.join(os.environ.get("OUTPUT_DIR", "study-output"), "chapterN_summa
 set_image_dir("img")                     # cropped figures: img/c_s<slide>.png
 
 big = bigpicture("The chapter's main idea in one or two sentences.", "الفكرة الرئيسية في سطر.",
-                 "Chapter topic", [(("Concept A", "a"), ["detail"], "has"), (("Concept B", "b"), [], "uses")],
+                 "Chapter topic", [(("Concept A", "a"), ["detail"], "has"), ("Concept B", [], "uses")],
                  src="Slides 1–20")
 
 s1 = section(1, "First group of concepts", "المجموعة الأولى", "Slides 3–6", "الشرائح 3–6", [
@@ -24,7 +24,7 @@ s1 = section(1, "First group of concepts", "المجموعة الأولى", "Sli
          why_ar="لماذا يهم، في سطر."),
     concept("a", "Concept A", definition="Exact course wording.", plain="One simple sentence.",
             how=["Part or rule 1.", "Part or rule 2."], example="Example from the slides.",
-            mistake="The usual confusion.", connects=[("b", "how A relates to B", "Concept B")],
+            mistake="The usual confusion.", connects=[],
             ar="المفهوم أ: معناه في سطر.", src="Slide 4"),
     # extra=fig("c_s5", 5, "Caption", "التسمية", "What it shows.", "ماذا يظهر.")
     # extra=law("Name", "الاسم", "Y = [[a || b]]", [("Y", "meaning", "المعنى", "unit")])
