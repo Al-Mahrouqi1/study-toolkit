@@ -282,6 +282,7 @@ a.tk-btn{text-decoration:none}
 .tk-twin{margin-top:.6rem;border-top:1px solid var(--line);padding-top:.5rem}
 .tk-twin summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:.3rem;list-style:none}
 .tk-twin p{margin:.4rem 0 0;font-size:14px}
+.tk-sig{text-align:center;font-size:12px;color:var(--muted);opacity:.75;padding:1.5rem 1rem 5rem;font-family:"Manrope",system-ui,sans-serif;letter-spacing:.02em}
 </style>
 </head>
 <body>
@@ -298,6 +299,7 @@ a.tk-btn{text-decoration:none}
 <div class="warn"><p class="e" dir="ltr">Sample note: the slide does not define this term. This is not covered in the provided chapters.</p><p class="a" dir="rtl">ملاحظة تجريبية: الشريحة لا تعرّف هذا المصطلح. هذا غير موجود في الفصول المقدّمة.</p></div>
 <div class="review"><b><span dir="ltr">For review (appears important to study)</span> · <span dir="rtl">للمراجعة (يبدو مهمًا للدراسة)</span></b><ul class="rv"><li><span class="e" dir="ltr">Definition of a database and its two parts.</span><span class="a" dir="rtl">تعريف قاعدة البيانات وجزآها.</span></li></ul></div></section><section id="quiz" class="quiz" data-mode="instant"><h2><span class="t"><span class="te" dir="ltr">Practice test</span><span class="ta" dir="rtl">اختبار تدريبي</span></span></h2><div class="bi"><p class="e" dir="ltr">Switch between instant feedback and exam mode from the bar below.</p><p class="a" dir="rtl">بدّل بين التصحيح الفوري ووضع الاختبار من الشريط بالأسفل.</p></div><div class="q" data-type="mcq" data-answer="1" data-src="Section 2 · Slides 3–6" data-ref="s2"><div class="qt"><span class="qn">1</span><div class="bi"><span class="kind">Multiple choice · اختيار من متعدد</span><p class="e" dir="ltr">A database stores data together with…</p><p class="a" dir="rtl">قاعدة البيانات تحفظ البيانات ومعها…</p></div></div><ol class="opts"><li><span class="e" dir="ltr">Only backups</span><span class="a" dir="rtl">النسخ الاحتياطية فقط</span></li><li><span class="e" dir="ltr">A description of the data</span><span class="a" dir="rtl">وصف للبيانات</span></li><li><span class="e" dir="ltr">The user's passwords</span><span class="a" dir="rtl">كلمات مرور المستخدمين</span></li></ol><div class="why"><b>Explanation · الشرح</b><div class="bi"><p class="e" dir="ltr">The definition says “and a description of this data”.</p><p class="a" dir="rtl">التعريف يقول «ووصف لهذه البيانات».</p></div></div></div><div class="q" data-type="tf" data-answer="false" data-src="Section 2 · Slides 3–6" data-ref="s2"><div class="qt"><span class="qn">2</span><div class="bi"><span class="kind">True or False · صح أم خطأ</span><p class="e" dir="ltr">An attribute is a thing the organisation stores data about.</p><p class="a" dir="rtl">الخاصية هي الشيء الذي تحفظ المؤسسة بيانات عنه.</p></div></div><div class="why"><b>Explanation · الشرح</b><div class="bi"><p class="e" dir="ltr">That is an entity; an attribute describes an entity.</p><p class="a" dir="rtl">هذا هو الكيان؛ أما الخاصية فتصف الكيان.</p></div></div></div><div class="q" data-type="essay" data-src="Section 2 · Slides 3–6" data-ref="s2"><div class="qt"><span class="qn">3</span><div class="bi"><span class="kind">Written answer · سؤال مقالي</span><p class="e" dir="ltr">Explain the difference between an entity and an attribute with an example.</p><p class="a" dir="rtl">اشرح الفرق بين الكيان والخاصية مع مثال.</p></div></div><div class="model"><b>Model answer · الإجابة النموذجية</b><div class="bi"><p class="e" dir="ltr">An entity is a thing we store data about (Student); an attribute describes it (Name).</p><p class="a" dir="rtl">الكيان شيء نحفظ عنه بيانات (الطالب)، والخاصية تصفه (الاسم).</p></div></div></div></section>
 </main>
+<footer class="tk-sig tk-x">Eyad Al-Mahrouqi · @q7r_9</footer>
 <script>(()=>{'use strict';
 const PRISTINE='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 const ROOT=document.querySelector('main')||document.body;
@@ -584,6 +586,7 @@ document.addEventListener('keydown',e=>{const inField=e.target.closest&&e.target
   if(e.key==='/'){e.preventDefault();openPanel('find');$('#tk-fin').focus()}});
 
 /* ---------- start ---------- */
+if(!$('.tk-sig'))document.body.append(E('footer',{class:'tk-sig tk-x'},'Eyad Al-Mahrouqi · @q7r_9'));
 applyLook();initQuiz();restore();buildToc();scrollBar();
 if(S.toc===true||(S.toc===null&&innerWidth>=1250))toggleToc(true);
 if(!S.saved)setTimeout(()=>toast('حدّد أي نص لترجمته أو تلوينه أو إضافة ملاحظة عليه',{icon:'hl',ms:5000}),800);

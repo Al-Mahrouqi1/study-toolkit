@@ -71,6 +71,8 @@ def add_toolkit(path, chapter=None, gloss=None, tk_id=None, css=None, js=None):
         import json
         meta += '<script type="application/json" id="tk-gloss">' + json.dumps(gloss, ensure_ascii=False).replace("<", "\\u003c") + "</script>"
     s = s.replace("</head>", f"{meta}<style>{css}</style>\n</head>", 1)
+    if 'class="tk-sig"' not in s:
+        s = s.replace("</body>", '<footer class="tk-sig tk-x">Eyad Al-Mahrouqi · @q7r_9</footer>\n</body>', 1)
     s = s.replace("</body>", f"<script>{js}</script>\n</body>", 1)
     open(path, "w", encoding="utf-8").write(s)
     return os.path.getsize(path)

@@ -284,6 +284,7 @@ document.addEventListener('keydown',e=>{const inField=e.target.closest&&e.target
   if(e.key==='/'){e.preventDefault();openPanel('find');$('#tk-fin').focus()}});
 
 /* ---------- start ---------- */
+if(!$('.tk-sig'))document.body.append(E('footer',{class:'tk-sig tk-x'},'Eyad Al-Mahrouqi · @q7r_9'));
 applyLook();initQuiz();restore();buildToc();scrollBar();
 if(S.toc===true||(S.toc===null&&innerWidth>=1250))toggleToc(true);
 if(!S.saved)setTimeout(()=>toast('حدّد أي نص لترجمته أو تلوينه أو إضافة ملاحظة عليه',{icon:'hl',ms:5000}),800);
